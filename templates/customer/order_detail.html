@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %} Order Detail {% endblock %}
+{% block content %}
+<style>
+    p{
+    font-weight:550;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h3>Order Detail</h3><hr>
+            <p>Order ID:<span class="font-weight-bold"> </span>Order_{{ord_obj.id}}</p>
+
+            <p>Order Status: <span class="font-weight-bold"></span>{{ord_obj.status}}</p>
+
+            <p>Ordered On: <span class="font-weight-bold"></span>{{ord_obj.date_created}}</p>
+
+            <p>Customer Information: <span class="font-weight-bold"></span> By {{ord_obj.created_by}}</p>
+
+            <p>Phone No: <span class="font-weight-bold"></span> {{ord_obj.phone}}</p>
+
+            <p>Shipping Address: <span class="font-weight-bold"></span>{{ord_obj.address}}</p>
+
+            <h4 class="mt-4 mb-4">Ordered Items</h4><hr>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>SN</th>
+                    <th>Item</th>
+                    <th>Rate</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for ci in ord_obj.cart.cartitem_set.all %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td><a target="_blank" href="{% url 'main:item_detail' ci.item.slug %}" >{{ci.item.name}}</a></td>
+                    <td>Ksh. {{ci.rate|intcomma}}</td>
+                    <td>{{ci.quantity}}</td>
+                    <td>Ksh. {{ci.subtotal|intcomma}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <th colspan="4" class="text-right">Total: </th>
+                    <th>Ksh. {{ord_obj.total|intcomma }}/=</th>
+                {% if ord_obj.discount %}
+                <tr>
+                    <th colspan="4" class="text-right">Discount: </th>
+                    <th>Ksh. {{ord_obj.discount|intcomma }}/=</th>
+                </tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

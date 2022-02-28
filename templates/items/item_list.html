@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}
+{% if category %} {{ category.name }} {% else %} Items {% endif %}
+{% endblock %}
+{% block content %}
+<style>
+.breadcrumb li a{
+color:#000;
+}
+.breadcrumb li#selected a, li#selected-1 a{
+color:#0d6efd;
+
+}
+.img-section img{
+transition: 0.9s all ease-in-out;
+}
+.img-section:hover img{
+transform:scale(0.92)
+}
+</style>
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" {% if not category %} id="selected" {% endif %}><a href="{% url 'main:item_list' %}">All</a></li>
+      {% for c in categories %}
+      <li class="breadcrumb-item" {% if category.slug == c.slug %}  id="selected-1" {% endif %}><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>
+      {% endfor %}
+  </ol>
+<div class="item-list">
+    <div class="row">
+        {% for item in items %}
+        <div class="col-md-3">
+            <div class="img-section">
+                <a href="{{ item.get_absolute_url }}"><img src="{{ item.image.url }}" class="img-fluid" style="width:100%;height:200px;"></a>
+            </div>
+            <div class="contents">
+                <h3 class="mb-3"><a href="{{ item.get_absolute_url }}">{{item.name}}</a> </h3>
+                <strong class="">Price: <strike>Ksh. {{ item.marked_price|intcomma  }}</strike> Ksh. {{ item.selling_price|intcomma  }}</strong>
+            </div>
+            <div class="d-grid gap-2 mt-3">
+                <a href="{% url 'main:add-to-cart' item.pk %}" class="btn btn-primary" type="button">Add To Cart</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

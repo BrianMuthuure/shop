@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %} Cart {% endblock %}
+
+{% block content %}
+<a href="{% url 'main:item_list' %}" class="btn btn-primary mb-4">
+    <i class="fa fa-arrow-left"></i>
+    Continue Shopping
+</a>
+<div class="row">
+    <div class="col-md-8">
+        {% if cart %}
+        <table class="table mt-4">
+            <thead>
+            <tr>
+                <th>No</th>
+                <th>Item</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ci in cart.cartitem_set.all %}
+            <tr>
+                <td>{{forloop.counter}}. </td>
+                <td><a href="{% url 'main:item_detail' ci.item.slug %}">{{ci.item}}</a> </td>
+                <td>Ksh. {{ci.item.selling_price|intcomma}}</td>
+                <td>
+                    <a href="{% url 'main:cart-management' ci.id %}?action=increase" style="margin-right:3px;color:blue;">
+                        <i class="fa fa-plus"></i>
+                    </a>
+                    {{ci.quantity}}
+                    <a href="{% url 'main:cart-management' ci.id %}?action=decrease" style="margin-left:3px;color:maroon;">
+                        <i class="fa fa-minus"></i>
+                    </a>
+                </td>
+                <td>Ksh. {{ ci.subtotal|intcomma }}</td>
+                <td>
+                    <a href="{% url 'main:cart-management' ci.id %}?action=remove" style="color:red;"><i class="fa fa-trash"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr class="mb-4">
+                <th colspan="4" class="text-right">Total</th>
+                <th><h4 class="font-weight-bold" style="font-weight:700;">Ksh. {{cart.total|intcomma}}</h4></th>
+            </tr>
+            </tbody>
+        </table>
+
+        {% if cart.cartitem_set.all %}
+        <a href="{% url 'main:emptycart' %}" class="btn btn-primary mb-4" style="width:350px;color:#fff;">Empty Cart</a>
+        {% endif %}
+        {% else %}
+        <small class="text-muted">You don't have any cart yet.</small>
+        {% endif %}
+
+        {% if cart.cartitem_set.all %}
+        <a href="{% url 'main:checkout' %}" class=" btn btn-warning mb-4" style="width:350px;color:#000;">Proceed to Checkout</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

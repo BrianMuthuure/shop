@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %} {{item.name}} {% endblock %}
+
+{% block content %}
+<div class="item-details">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{item.image.url}}" class="img-fluid" style="width:100%; height:300px;">
+        </div>
+        <div class="col-md-6 mt-3">
+            <h2 class="mb-4">{{item.name}}</h2>
+            <h4 class="mb-3" >Rating: <span class="p-2" style="background-color:#198754;;color:#fff;border-radius:4px;">{{ average }} / 5</span></h4>
+            <strong class="mb-4">Price: <strike style="padding-right:10px;">Ksh. {{ item.marked_price|intcomma }}</strike>Ksh. {{ item.selling_price|intcomma }}</strong>
+            <p class="mt-3">{{item.description}}</p>
+            <p class="text-muted">Warranty: {{item.warranty}}</p>
+            <div class="d-grid gap-2 mt-4">
+                <a href="{% url 'main:add-to-cart' item.pk %}" class="btn btn-primary" type="button">Add To Cart</a>
+            </div>
+        </div>
+    </div>
+<hr>
+    <div class="row py-3">
+        <div class="col-md-5">
+            <h4 class="">Write Your review</h4>
+            <form class="review-form" action="{% url 'main:add_review' item.slug %}" method="post">
+                {% csrf_token %}
+                <label for="comment">Review</label>
+                <textarea name="comment" id="comment" cols="30" rows="3" class="form-control"></textarea>
+                <label class="mt-3">Rating</label>
+                <input type="range" id="rangeInput" name="rate" min="0" max="5" value="0" step="1" oninput="amount.value=rangeInput.value">
+                <output name="amount" id="amount" for="rangeInput">0</output>
+                <br>
+                <div class="d-grid gap-2 mt-4">
+                    <input type="submit" class="btn btn-success mt-3" value="Add Review">
+                </div>
+            </form>
+        </div>
+        <div class="col-md-7 mt-2 ">
+            {% if reviews %}
+            <h4>Reviews</h4>
+            {% for review in reviews %}
+            <div class="row p-2">
+                <div class="col-md-5 mt-2">
+                    <h5>{{forloop.counter}}. By: <i class="fa fa-user"></i> {{ review.user.first_name }} {{ review.user.last_name }} : </h5>
+                    <h5>Rating: {{ review.rate }}</h5>
+                </div>
+
+                <div class="col-md-7 mt-2">
+                    <p class="text-muted">{{ review.comment }}</p>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>No reviews yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
